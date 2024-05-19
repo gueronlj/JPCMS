@@ -12,11 +12,13 @@ import (
 func main() {
 	//Start the http server
 	fmt.Println("Running JPCMS backend on port 8080")
+
 	app := echo.New()
 
 	app.GET("/servicers", handlers.ServicerHandler{}.ViewServicers)
 	app.GET("/requests", handlers.RequestHandler{}.ViewRequests)
 	app.GET("/clients", handlers.ClientHandler{}.ViewClients)
+	app.POST("/clients", handlers.ClientHandler{}.AddClient)
 	// prints error and exits program
 	db.InitDB()
 	PORT := os.Getenv("PORT")

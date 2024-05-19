@@ -32,6 +32,26 @@ func (h ClientHandler) ViewClients(data echo.Context) error {
 	return data.JSON(http.StatusOK, clients)
 }
 
+func CreateClient(client models.Client) (models.Client, error) {
+	database := db.GetDB()
+	query := `INSERT INTO clients (id, firstname, lastname, address) VALUES ($1, $2, $3, $4) RETURNING ID`
+	err := database.QueryRow(query, client.ID, client.FirstName, client.LastName, client.Address).Scan(&client.ID)
+	if err != nil {
+		return client, err
+	}
+	return client, nil
+}
+
+func (h ClientHandler) AddClient(data echo.Context) error {
+	client := models.Client{}
+	data.Bind(&client)
+	newClient, err := CreateClient(client)
+	if err != nil {
+		return data.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return data.JSON(http.StatusCreated, newClient)
+}
+
 func (h ServicerHandler) ViewServicers(data echo.Context) error {
 	database := db.GetDB()
 	rows, err := database.Query("SELECT * FROM servicers;")
