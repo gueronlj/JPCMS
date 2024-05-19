@@ -1,36 +1,37 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
+
 	"github.com/labstack/echo/v4"
-	"database/sql"
-	_"github.com/lib/pq"
+	_ "github.com/lib/pq"
 )
 
 type Servicer struct {
-	ID string
+	ID        string
 	FirstName string
-	LastName string
-	Status string
+	LastName  string
+	Status    string
 }
 
 type Client struct {
-	ID string
+	ID        string
 	FirstName string
-	LastName string
-	Address string
+	LastName  string
+	Address   string
 }
 
 type Request struct {
-	ID string
-	ClientID string
-	ServicerID string
-	Address string
+	ID            string
+	ClientID      string
+	ServicerID    string
+	Address       string
 	InvoiceNumber string
-	Description string
-	Date string
-	Time string
+	Description   string
+	Date          string
+	Time          string
 }
 
 func viewServicers(data echo.Context) error {
@@ -83,7 +84,7 @@ func viewRequests(data echo.Context) error {
 	return data.JSON(http.StatusOK, requests)
 }
 
-func viewClients (data echo.Context) error {
+func viewClients(data echo.Context) error {
 	connectDB := "postgresql://gueronlj:4R3mijJzQYCc@ep-mute-term-70885178.us-east-2.aws.neon.tech/jps?sslmode=require"
 	connection, err := sql.Open("postgres", connectDB)
 	if err != nil {
