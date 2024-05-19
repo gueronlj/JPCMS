@@ -14,18 +14,15 @@ func InitDB() {
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
-
 	connectionStr := os.Getenv("DB_STR")
 	db, err := sql.Open("postgres", connectionStr)
 	if err != nil {
 		fmt.Println(err)
 	}
 	err = db.Ping()
-
 	if err != nil {
 		panic(err.Error())
 	}
-
 	fmt.Println("Successfully connected to database")
 }
 
@@ -34,7 +31,6 @@ func GetDB() *sql.DB {
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
-
 	connectionStr := os.Getenv("DB_STR")
 	db, err := sql.Open("postgres", connectionStr)
 	if err != nil {

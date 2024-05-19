@@ -9,11 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type ClientHandler struct{}
-type ServicerHandler struct{}
-type RequestHandler struct{}
-
-func (h ClientHandler) ViewClients(data echo.Context) error {
+func ViewClients(data echo.Context) error {
 	database := db.GetDB()
 	rows, err := database.Query("SELECT * FROM clients;")
 	if err != nil {
@@ -42,7 +38,31 @@ func CreateClient(client models.Client) (models.Client, error) {
 	return client, nil
 }
 
-func (h ClientHandler) AddClient(data echo.Context) error {
+func UpdateClient(client models.Client) (models.Client, error) {
+	database := db.GetDB()
+	query :=
+		`UPDATE clients 
+		SET FirstName = $2, LastName = $3, Address = $4
+		WHERE id = $1
+		RETURNING id`
+	err := database.QueryRow(query, client.ID, client.FirstName, client.LastName, client.Address).Scan(&client.ID)
+	if err != nil {
+		return client, err
+	}
+	return client, nil
+}
+
+func EditClient(data echo.Context) error {
+	client := models.Client{}
+	data.Bind(&client)
+	finalClient, err := UpdateClient(client)
+	if err != nil {
+		return data.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return data.JSON(http.StatusCreated, finalClient)
+}
+
+func AddClient(data echo.Context) error {
 	client := models.Client{}
 	data.Bind(&client)
 	newClient, err := CreateClient(client)
@@ -52,7 +72,7 @@ func (h ClientHandler) AddClient(data echo.Context) error {
 	return data.JSON(http.StatusCreated, newClient)
 }
 
-func (h ServicerHandler) ViewServicers(data echo.Context) error {
+func ViewServicers(data echo.Context) error {
 	database := db.GetDB()
 	rows, err := database.Query("SELECT * FROM servicers;")
 	if err != nil {
@@ -71,7 +91,7 @@ func (h ServicerHandler) ViewServicers(data echo.Context) error {
 	return data.JSON(http.StatusOK, servicers)
 }
 
-func (h RequestHandler) ViewRequests(data echo.Context) error {
+func ViewRequests(data echo.Context) error {
 	database := db.GetDB()
 	rows, err := database.Query("SELECT * FROM requests;")
 	if err != nil {
