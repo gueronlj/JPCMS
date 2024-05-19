@@ -5,34 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/JPCMS/models"
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 )
-
-type Servicer struct {
-	ID        string
-	FirstName string
-	LastName  string
-	Status    string
-}
-
-type Client struct {
-	ID        string
-	FirstName string
-	LastName  string
-	Address   string
-}
-
-type Request struct {
-	ID            string
-	ClientID      string
-	ServicerID    string
-	Address       string
-	InvoiceNumber string
-	Description   string
-	Date          string
-	Time          string
-}
 
 func viewServicers(data echo.Context) error {
 	connectDB := "postgresql://gueronlj:4R3mijJzQYCc@ep-mute-term-70885178.us-east-2.aws.neon.tech/jps?sslmode=require"
@@ -47,9 +23,9 @@ func viewServicers(data echo.Context) error {
 		fmt.Println(err)
 	}
 	defer rows.Close()
-	var servicers []Servicer
+	var servicers []models.Servicer
 	for rows.Next() {
-		var servicer Servicer
+		var servicer models.Servicer
 		err := rows.Scan(&servicer.ID, &servicer.FirstName, &servicer.LastName, &servicer.Status)
 		if err != nil {
 			panic(err)
@@ -72,9 +48,9 @@ func viewRequests(data echo.Context) error {
 		fmt.Println(err)
 	}
 	defer rows.Close()
-	var requests []Request
+	var requests []models.Request
 	for rows.Next() {
-		var req Request
+		var req models.Request
 		err := rows.Scan(&req.ID, &req.ClientID, &req.ServicerID, &req.Address, &req.InvoiceNumber, &req.Description, &req.Date, &req.Time)
 		if err != nil {
 			panic(err)
@@ -96,9 +72,9 @@ func viewClients(data echo.Context) error {
 		fmt.Println(err)
 	}
 	defer rows.Close()
-	var clients []Client
+	var clients []models.Client
 	for rows.Next() {
-		var cli Client
+		var cli models.Client
 		err := rows.Scan(&cli.ID, &cli.FirstName, &cli.LastName, &cli.Address)
 		if err != nil {
 			panic(err)
