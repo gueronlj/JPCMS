@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/JPCMS/db"
 	"github.com/JPCMS/handlers"
 	"github.com/labstack/echo/v4"
-	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -17,7 +18,9 @@ func main() {
 	app.GET("/requests", handlers.RequestHandler{}.ViewRequests)
 	app.GET("/clients", handlers.ClientHandler{}.ViewClients)
 	// prints error and exits program
+	db.InitDB()
+	PORT := os.Getenv("PORT")
 	app.Logger.Fatal(
-		app.Start(":8080"),
+		app.Start(PORT),
 	)
 }

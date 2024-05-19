@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 
+	"github.com/JPCMS/db"
 	"github.com/JPCMS/models"
 	"github.com/labstack/echo/v4"
 )
@@ -14,13 +14,8 @@ type ServicerHandler struct{}
 type RequestHandler struct{}
 
 func (h ClientHandler) ViewClients(data echo.Context) error {
-	connectDB := "postgresql://gueronlj:4R3mijJzQYCc@ep-mute-term-70885178.us-east-2.aws.neon.tech/jps?sslmode=require"
-	connection, err := sql.Open("postgres", connectDB)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer connection.Close()
-	rows, err := connection.Query("SELECT * FROM clients;")
+	database := db.GetDB()
+	rows, err := database.Query("SELECT * FROM clients;")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -38,14 +33,8 @@ func (h ClientHandler) ViewClients(data echo.Context) error {
 }
 
 func (h ServicerHandler) ViewServicers(data echo.Context) error {
-	connectDB := "postgresql://gueronlj:4R3mijJzQYCc@ep-mute-term-70885178.us-east-2.aws.neon.tech/jps?sslmode=require"
-	connection, err := sql.Open("postgres", connectDB)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer connection.Close()
-
-	rows, err := connection.Query("SELECT * FROM servicers;")
+	database := db.GetDB()
+	rows, err := database.Query("SELECT * FROM servicers;")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -63,14 +52,8 @@ func (h ServicerHandler) ViewServicers(data echo.Context) error {
 }
 
 func (h RequestHandler) ViewRequests(data echo.Context) error {
-	connectDB := "postgresql://gueronlj:4R3mijJzQYCc@ep-mute-term-70885178.us-east-2.aws.neon.tech/jps?sslmode=require"
-	connection, err := sql.Open("postgres", connectDB)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer connection.Close()
-
-	rows, err := connection.Query("SELECT * FROM requests;")
+	database := db.GetDB()
+	rows, err := database.Query("SELECT * FROM requests;")
 	if err != nil {
 		fmt.Println(err)
 	}
