@@ -60,30 +60,6 @@ func viewRequests(data echo.Context) error {
 	return data.JSON(http.StatusOK, requests)
 }
 
-func viewClients(data echo.Context) error {
-	connectDB := "postgresql://gueronlj:4R3mijJzQYCc@ep-mute-term-70885178.us-east-2.aws.neon.tech/jps?sslmode=require"
-	connection, err := sql.Open("postgres", connectDB)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer connection.Close()
-	rows, err := connection.Query("SELECT * FROM clients;")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer rows.Close()
-	var clients []models.Client
-	for rows.Next() {
-		var cli models.Client
-		err := rows.Scan(&cli.ID, &cli.FirstName, &cli.LastName, &cli.Address)
-		if err != nil {
-			panic(err)
-		}
-		clients = append(clients, cli)
-	}
-	return data.JSON(http.StatusOK, clients)
-}
-
 func main() {
 	//Start the http server
 	fmt.Println("Running JPCMS backend on port 8080")
@@ -91,7 +67,7 @@ func main() {
 
 	app.GET("/servicers", viewServicers)
 	app.GET("/requests", viewRequests)
-	app.GET("/clients", viewClients)
+	app.GET("/clients", controllers.viewClients)
 
 	// prints error and exits program
 	app.Logger.Fatal(
