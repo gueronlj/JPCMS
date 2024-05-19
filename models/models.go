@@ -1,5 +1,9 @@
 package models
 
+import (
+	"time"
+)
+
 type Servicer struct {
 	ID        string
 	FirstName string
@@ -21,6 +25,6 @@ type Request struct {
 	Address       string
 	InvoiceNumber string
 	Description   string
-	Date          string
-	Time          string
+	Date          time.Time
+	Time          time.Time
 }

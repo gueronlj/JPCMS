@@ -28,34 +28,10 @@ func ViewClients(data echo.Context) error {
 	return data.JSON(http.StatusOK, clients)
 }
 
-func CreateClient(client models.Client) (models.Client, error) {
-	database := db.GetDB()
-	query := `INSERT INTO clients (id, firstname, lastname, address) VALUES ($1, $2, $3, $4) RETURNING ID`
-	err := database.QueryRow(query, client.ID, client.FirstName, client.LastName, client.Address).Scan(&client.ID)
-	if err != nil {
-		return client, err
-	}
-	return client, nil
-}
-
-func UpdateClient(client models.Client) (models.Client, error) {
-	database := db.GetDB()
-	query :=
-		`UPDATE clients 
-		SET FirstName = $2, LastName = $3, Address = $4
-		WHERE id = $1
-		RETURNING id`
-	err := database.QueryRow(query, client.ID, client.FirstName, client.LastName, client.Address).Scan(&client.ID)
-	if err != nil {
-		return client, err
-	}
-	return client, nil
-}
-
 func EditClient(data echo.Context) error {
 	client := models.Client{}
 	data.Bind(&client)
-	finalClient, err := UpdateClient(client)
+	finalClient, err := db.UpdateClient(client)
 	if err != nil {
 		return data.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -65,7 +41,7 @@ func EditClient(data echo.Context) error {
 func AddClient(data echo.Context) error {
 	client := models.Client{}
 	data.Bind(&client)
-	newClient, err := CreateClient(client)
+	newClient, err := db.CreateClient(client)
 	if err != nil {
 		return data.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -91,6 +67,26 @@ func ViewServicers(data echo.Context) error {
 	return data.JSON(http.StatusOK, servicers)
 }
 
+func EditServicer(data echo.Context) error {
+	servicer := models.Servicer{}
+	data.Bind(&servicer)
+	finalServicer, err := db.UpdateServicer(servicer)
+	if err != nil {
+		return data.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return data.JSON(http.StatusCreated, finalServicer)
+}
+
+func AddServicer(data echo.Context) error {
+	servicer := models.Servicer{}
+	data.Bind(&servicer)
+	newServicer, err := db.CreateServicer(servicer)
+	if err != nil {
+		return data.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return data.JSON(http.StatusCreated, newServicer)
+}
+
 func ViewRequests(data echo.Context) error {
 	database := db.GetDB()
 	rows, err := database.Query("SELECT * FROM requests;")
@@ -108,4 +104,24 @@ func ViewRequests(data echo.Context) error {
 		requests = append(requests, req)
 	}
 	return data.JSON(http.StatusOK, requests)
+}
+
+func EditRequest(data echo.Context) error {
+	request := models.Request{}
+	data.Bind(&request)
+	finalRequest, err := db.UpdateRequest(request)
+	if err != nil {
+		return data.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return data.JSON(http.StatusCreated, finalRequest)
+}
+
+func AddRequest(data echo.Context) error {
+	request := models.Request{}
+	data.Bind(&request)
+	newRequest, err := db.CreateRequest(request)
+	if err != nil {
+		return data.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return data.JSON(http.StatusCreated, newRequest)
 }
