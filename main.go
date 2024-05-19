@@ -68,7 +68,6 @@ func main() {
 	app.GET("/servicers", viewServicers)
 	app.GET("/requests", viewRequests)
 	app.GET("/clients", controllers.viewClients)
-
 	// prints error and exits program
 	app.Logger.Fatal(
 		app.Start(":8080"),
