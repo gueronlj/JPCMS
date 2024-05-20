@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type Servicer struct {
@@ -27,4 +29,10 @@ type Request struct {
 	Description   string
 	Date          time.Time
 	Time          time.Time
+}
+
+type JwtCustomClaims struct {
+	Name  string `json:"name"`
+	Admin bool   `json:"admin"`
+	jwt.RegisteredClaims
 }
