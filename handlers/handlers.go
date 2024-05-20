@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gueronlj/JPCMS/auth"
@@ -89,7 +90,7 @@ func AddServicer(data echo.Context) error {
 }
 
 func ViewRequests(data echo.Context) error {
-	if auth.CheckAuth(data.Request()) == "success" {
+	if auth.CheckJWT(data.Request()) == "success" {
 		database := db.GetDB()
 		rows, err := database.Query("SELECT * FROM requests;")
 		if err != nil {
@@ -107,7 +108,7 @@ func ViewRequests(data echo.Context) error {
 		}
 		return data.JSON(http.StatusOK, requests)
 	}
-	return data.JSON(http.StatusUnauthorized, auth.CheckAuth(data.Request()))
+	return data.JSON(http.StatusUnauthorized, auth.CheckJWT(data.Request()))
 }
 
 func EditRequest(data echo.Context) error {
@@ -129,3 +130,33 @@ func AddRequest(data echo.Context) error {
 	}
 	return data.JSON(http.StatusCreated, newRequest)
 }
+
+func Login(c echo.Context) error {
+	tokenString, err := auth.CreateToken("Jon")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(tokenString)
+	return c.JSON(http.StatusOK, echo.Map{
+		"token": tokenString,
+	})
+}
+
+// func Login(c echo.Context) error {
+// 	// Set custom claims
+// 	claims := JwtCustomClaims{
+// 		"jon",
+// 		true,
+// 		jwt.RegisteredClaims{
+// 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+// 		},
+// 	}
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	tokenString, err := token.SignedString([]byte(secretKey))
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return c.JSON(http.StatusOK, echo.Map{
+// 		"token": tokenString,
+// 	})
+// }

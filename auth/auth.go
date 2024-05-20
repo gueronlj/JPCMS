@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 )
 
 type JwtCustomClaims struct {
@@ -31,21 +30,21 @@ func verifyToken(tokenString string) error {
 	return nil
 }
 
-// func createToken(username string) (string, error) {
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
-// 		jwt.MapClaims{
-// 			"username": username,
-// 			"exp":      time.Now().Add(time.Hour * 24).Unix(),
-// 		})
+func CreateToken(username string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"username": username,
+			"exp":      time.Now().Add(time.Hour * 24).Unix(),
+		})
 
-// 	tokenString, err := token.SignedString(secretKey)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	return tokenString, nil
-// }
+	tokenString, err := token.SignedString(secretKey)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
 
-func CheckAuth(r *http.Request) string {
+func CheckJWT(r *http.Request) string {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
 		return ("Missing authorization header")
@@ -57,30 +56,4 @@ func CheckAuth(r *http.Request) string {
 		return ("Invalid token")
 	}
 	return ("success")
-}
-
-func Login(c echo.Context) error {
-	// username := c.FormValue("username")
-	// password := c.FormValue("password")
-	// // Throws unauthorized error
-	// if username != "jon" || password != "shhh!" {
-	// 	return echo.ErrUnauthorized
-	// }
-
-	// Set custom claims
-	claims := JwtCustomClaims{
-		"jon",
-		true,
-		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(secretKey))
-	if err != nil {
-		return err
-	}
-	return c.JSON(http.StatusOK, echo.Map{
-		"token": tokenString,
-	})
 }

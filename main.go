@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gueronlj/JPCMS/auth"
 	"github.com/gueronlj/JPCMS/db"
 	"github.com/gueronlj/JPCMS/handlers"
 	"github.com/labstack/echo/v4"
@@ -17,7 +16,7 @@ func main() {
 
 	app := echo.New()
 
-	app.POST("/login", auth.Login)
+	app.POST("/login", handlers.Login)
 	app.GET("/servicers", handlers.ViewServicers)
 	app.POST("/servicers", handlers.AddServicer)
 	app.PUT("/servicers", handlers.EditServicer)
