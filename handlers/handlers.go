@@ -90,25 +90,22 @@ func AddServicer(data echo.Context) error {
 }
 
 func ViewRequests(data echo.Context) error {
-	if auth.CheckJWT(data.Request()) == "success" {
-		database := db.GetDB()
-		rows, err := database.Query("SELECT * FROM requests;")
-		if err != nil {
-			fmt.Println(err)
-		}
-		defer rows.Close()
-		var requests []models.Request
-		for rows.Next() {
-			var req models.Request
-			err := rows.Scan(&req.ID, &req.ClientID, &req.ServicerID, &req.Address, &req.InvoiceNumber, &req.Description, &req.Date, &req.Time)
-			if err != nil {
-				panic(err)
-			}
-			requests = append(requests, req)
-		}
-		return data.JSON(http.StatusOK, requests)
+	database := db.GetDB()
+	rows, err := database.Query("SELECT * FROM requests;")
+	if err != nil {
+		fmt.Println(err)
 	}
-	return data.JSON(http.StatusUnauthorized, auth.CheckJWT(data.Request()))
+	defer rows.Close()
+	var requests []models.Request
+	for rows.Next() {
+		var req models.Request
+		err := rows.Scan(&req.ID, &req.ClientID, &req.ServicerID, &req.Address, &req.InvoiceNumber, &req.Description, &req.Date, &req.Time)
+		if err != nil {
+			panic(err)
+		}
+		requests = append(requests, req)
+	}
+	return data.JSON(http.StatusOK, requests)
 }
 
 func EditRequest(data echo.Context) error {

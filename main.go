@@ -6,6 +6,7 @@ import (
 
 	"github.com/gueronlj/JPCMS/db"
 	"github.com/gueronlj/JPCMS/handlers"
+	"github.com/gueronlj/JPCMS/middleware"
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,13 +16,14 @@ func main() {
 	db.InitDB()
 
 	app := echo.New()
+	//app.Use(middleware.JWTAuth)
 
 	app.POST("/login", handlers.Login)
 	app.GET("/servicers", handlers.ViewServicers)
 	app.POST("/servicers", handlers.AddServicer)
 	app.PUT("/servicers", handlers.EditServicer)
 
-	app.GET("/requests", handlers.ViewRequests)
+	app.GET("/requests", middleware.JWTAuth(handlers.ViewRequests))
 	app.POST("/requests", handlers.AddRequest)
 	app.PUT("/requests", handlers.EditRequest)
 
