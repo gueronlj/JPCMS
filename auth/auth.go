@@ -4,9 +4,17 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/echo/v4"
 )
+
+type JwtCustomClaims struct {
+	Name  string `json:"name"`
+	Admin bool   `json:"admin"`
+	jwt.RegisteredClaims
+}
 
 var secretKey = []byte(os.Getenv("SECRET"))
 
@@ -49,4 +57,30 @@ func CheckAuth(r *http.Request) string {
 		return ("Invalid token")
 	}
 	return ("success")
+}
+
+func Login(c echo.Context) error {
+	// username := c.FormValue("username")
+	// password := c.FormValue("password")
+	// // Throws unauthorized error
+	// if username != "jon" || password != "shhh!" {
+	// 	return echo.ErrUnauthorized
+	// }
+
+	// Set custom claims
+	claims := JwtCustomClaims{
+		"jon",
+		true,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(secretKey))
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, echo.Map{
+		"token": tokenString,
+	})
 }
