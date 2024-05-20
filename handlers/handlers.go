@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/JPCMS/auth"
-	"github.com/JPCMS/db"
-	"github.com/JPCMS/models"
+	"github.com/gueronlj/JPCMS/auth"
+	"github.com/gueronlj/JPCMS/db"
+	"github.com/gueronlj/JPCMS/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -89,23 +89,25 @@ func AddServicer(data echo.Context) error {
 }
 
 func ViewRequests(data echo.Context) error {
-	auth.CheckAuth(data)
-	database := db.GetDB()
-	rows, err := database.Query("SELECT * FROM requests;")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer rows.Close()
-	var requests []models.Request
-	for rows.Next() {
-		var req models.Request
-		err := rows.Scan(&req.ID, &req.ClientID, &req.ServicerID, &req.Address, &req.InvoiceNumber, &req.Description, &req.Date, &req.Time)
+	if auth.CheckAuth(data.Request()) == "success" {
+		database := db.GetDB()
+		rows, err := database.Query("SELECT * FROM requests;")
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
-		requests = append(requests, req)
+		defer rows.Close()
+		var requests []models.Request
+		for rows.Next() {
+			var req models.Request
+			err := rows.Scan(&req.ID, &req.ClientID, &req.ServicerID, &req.Address, &req.InvoiceNumber, &req.Description, &req.Date, &req.Time)
+			if err != nil {
+				panic(err)
+			}
+			requests = append(requests, req)
+		}
+		return data.JSON(http.StatusOK, requests)
 	}
-	return data.JSON(http.StatusOK, requests)
+	return data.JSON(http.StatusUnauthorized, auth.CheckAuth(data.Request()))
 }
 
 func EditRequest(data echo.Context) error {

@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/JPCMS/db"
-	"github.com/JPCMS/handlers"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gueronlj/JPCMS/db"
+	"github.com/gueronlj/JPCMS/handlers"
 	"github.com/labstack/echo/v4"
 )
 

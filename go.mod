@@ -1,4 +1,4 @@
-module github.com/JPCMS
+module github.com/gueronlj/JPCMS
 
 go 1.21.4
 

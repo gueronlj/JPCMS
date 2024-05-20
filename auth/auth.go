@@ -37,22 +37,16 @@ func verifyToken(tokenString string) error {
 // 	return tokenString, nil
 // }
 
-func CheckAuth(w http.ResponseWriter, r *http.Request) bool {
+func CheckAuth(r *http.Request) string {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Missing authorization header")
-		return false
+		return ("Missing authorization header")
 	}
 	tokenString = tokenString[len("Bearer "):]
 
 	err := verifyToken(tokenString)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Invalid token")
-		return false
+		return ("Invalid token")
 	}
-
-	fmt.Fprint(w, "Welcome to the the protected area")
-	return true
+	return ("success")
 }

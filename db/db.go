@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/JPCMS/models"
+	"github.com/gueronlj/JPCMS/models"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
