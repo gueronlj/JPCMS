@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/JPCMS/auth"
 	"github.com/JPCMS/db"
 	"github.com/JPCMS/models"
 	"github.com/labstack/echo/v4"
@@ -88,6 +89,7 @@ func AddServicer(data echo.Context) error {
 }
 
 func ViewRequests(data echo.Context) error {
+	auth.CheckAuth(data)
 	database := db.GetDB()
 	rows, err := database.Query("SELECT * FROM requests;")
 	if err != nil {
