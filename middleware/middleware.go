@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gueronlj/JPCMS/auth"
@@ -10,10 +9,10 @@ import (
 
 func JWTAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		if auth.CheckJWT(c.Request()) == "success" {
-			fmt.Println("we mid!")
+		reason, response := auth.CheckJWT((c.Request()))
+		if response {
 			return next(c)
 		}
-		return c.JSON(http.StatusUnauthorized, auth.CheckJWT(c.Request()))
+		return c.JSON(http.StatusUnauthorized, reason)
 	}
 }

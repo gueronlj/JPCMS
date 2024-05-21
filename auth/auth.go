@@ -30,7 +30,6 @@ func CreateToken(username string) (string, error) {
 			"username": username,
 			"exp":      time.Now().Add(time.Hour * 24).Unix(),
 		})
-
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", err
@@ -38,16 +37,15 @@ func CreateToken(username string) (string, error) {
 	return tokenString, nil
 }
 
-func CheckJWT(r *http.Request) string {
+func CheckJWT(r *http.Request) (string, bool) {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
-		return ("Missing authorization header")
+		return "Missing authorization header", false
 	}
 	tokenString = tokenString[len("Bearer "):]
-
 	err := verifyToken(tokenString)
 	if err != nil {
-		return ("Invalid token")
+		return "Invalid token", false
 	}
-	return ("success")
+	return "success", true
 }

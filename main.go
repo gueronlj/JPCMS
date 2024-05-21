@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
+	"text/template"
 
 	"github.com/gueronlj/JPCMS/db"
 	"github.com/gueronlj/JPCMS/handlers"
@@ -10,15 +12,27 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type Template struct {
+	templates *template.Template
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates.ExecuteTemplate(w, name, data)
+}
+
 func main() {
 	//Start the http server
 	fmt.Println("Running JPCMS backend on port 8080")
+
 	db.InitDB()
 
 	app := echo.New()
-	//app.Use(middleware.JWTAuth)
+	app.Renderer = &Template{
+		templates: template.Must(template.ParseGlob("./templates/*.html")),
+	}
 
 	app.POST("/login", handlers.Login)
+	app.GET("/loginpage", handlers.Loginpage)
 	app.GET("/servicers", handlers.ViewServicers)
 	app.POST("/servicers", handlers.AddServicer)
 	app.PUT("/servicers", handlers.EditServicer)

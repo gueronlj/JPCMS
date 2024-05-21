@@ -134,26 +134,12 @@ func Login(c echo.Context) error {
 		log.Fatal(err)
 	}
 	fmt.Println(tokenString)
+	//return c.Render(http.StatusOK)
 	return c.JSON(http.StatusOK, echo.Map{
 		"token": tokenString,
 	})
 }
 
-// func Login(c echo.Context) error {
-// 	// Set custom claims
-// 	claims := JwtCustomClaims{
-// 		"jon",
-// 		true,
-// 		jwt.RegisteredClaims{
-// 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
-// 		},
-// 	}
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-// 	tokenString, err := token.SignedString([]byte(secretKey))
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return c.JSON(http.StatusOK, echo.Map{
-// 		"token": tokenString,
-// 	})
-// }
+func Loginpage(c echo.Context) error {
+	return c.Render(http.StatusOK, "login.html", "")
+}
