@@ -30,9 +30,9 @@ func main() {
 	app.Renderer = &Template{
 		templates: template.Must(template.ParseGlob("./templates/*.html")),
 	}
+	app.GET("/", handlers.Loginpage)
+	app.POST("/signin", handlers.AttemptSignIn)
 
-	app.POST("/login", handlers.Login)
-	app.GET("/loginpage", handlers.Loginpage)
 	app.GET("/servicers", handlers.ViewServicers)
 	app.POST("/servicers", handlers.AddServicer)
 	app.PUT("/servicers", handlers.EditServicer)

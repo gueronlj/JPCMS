@@ -128,16 +128,19 @@ func AddRequest(data echo.Context) error {
 	return data.JSON(http.StatusCreated, newRequest)
 }
 
-func Login(c echo.Context) error {
-	tokenString, err := auth.CreateToken("Jon")
-	if err != nil {
-		log.Fatal(err)
+func AttemptSignIn(c echo.Context) error {
+	username := c.FormValue("username")
+	if username == "admin" {
+		tokenString, err := auth.CreateToken(username)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(tokenString)
+		return c.JSON(http.StatusOK, echo.Map{
+			"token": tokenString,
+		})
 	}
-	fmt.Println(tokenString)
-	//return c.Render(http.StatusOK)
-	return c.JSON(http.StatusOK, echo.Map{
-		"token": tokenString,
-	})
+	return c.JSON(http.StatusForbidden, "You do not have permission to be here.")
 }
 
 func Loginpage(c echo.Context) error {
